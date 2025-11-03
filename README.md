@@ -69,7 +69,7 @@ Configuration is done via environment variables or a `.env` file:
 
 ```env
 SERVER_PORT=8080
-REDIS_HOST=redis
+REDIS_HOST=localhost
 REDIS_PORT=6379
 MAX_REQUESTS_PER_SECOND=5
 BLOCKING_TIME_SECONDS=300
@@ -77,8 +77,8 @@ ENABLE_IP_RATE_LIMITER=true
 ENABLE_TOKEN_RATE_LIMITER=true
 
 # Token limits
-TOKEN_LIMIT_my-secret-token=10:60
-TOKEN_LIMIT_premium-token=100:300
+TOKEN_LIMIT_my_secret_token=10:60
+TOKEN_LIMIT_premium_token=100:300
 ```
 
 ## Usage
@@ -336,7 +336,3 @@ This project is part of a FullCycle challenge.
 ## Author
 
 Developed as part of FullCycle Go challenge.
-
-
-
-

@@ -31,7 +31,7 @@ services:
       # Example: Token 'my-secret-token' with max 10 requests and 60 second TTL
       - TOKEN_LIMIT_my-secret-token=10:60
       # Example: Token 'premium-token' with max 100 requests and 300 second TTL
-      - TOKEN_LIMIT_premium-token=100:300
+      - TOKEN_LIMIT_premium_token=100:300
     depends_on:
       redis:
         condition: service_healthy
@@ -39,4 +39,3 @@ services:
 
 volumes:
   redis_data:
-

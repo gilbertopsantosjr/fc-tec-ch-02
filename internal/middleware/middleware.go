@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"encoding/json"
+	"log"
 	"net"
 	"net/http"
 	"strings"
@@ -24,11 +25,8 @@ func RateLimitMiddleware(rateLimiterService *limiter.Service) func(http.Handler)
 			
 			// Check rate limit and increment
 			allowed, resetTime, err := rateLimiterService.CheckAndIncrement(ctx, ip, token)
-			if err != nil {
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
-				return
-			}
 			
+			// Check if rate limit is exceeded first (even if there's an error)
 			if !allowed {
 				// Rate limit exceeded
 				w.Header().Set("Content-Type", "application/json")
@@ -39,6 +37,13 @@ func RateLimitMiddleware(rateLimiterService *limiter.Service) func(http.Handler)
 					"error":      "Rate limit exceeded",
 					"reset_time": resetTime.Format(time.RFC3339),
 				})
+				return
+			}
+			
+			// Only return 500 if there's an actual error (not rate limit exceeded)
+			if err != nil {
+				log.Printf("Rate limiter error: %v (IP: %s, Token: %s)", err, ip, token)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
 			
@@ -83,8 +88,14 @@ func getClientIP(r *http.Request) string {
 
 // getTokenFromRequest extracts the API token from the request headers
 func getTokenFromRequest(r *http.Request) string {
-	// Check X-API-Token header first
-	token := r.Header.Get("X-API-Token")
+	// Check API_KEY header first (as used in tests)
+	token := r.Header.Get("API_KEY")
+	if token != "" {
+		return token
+	}
+	
+	// Check X-API-Token header
+	token = r.Header.Get("X-API-Token")
 	if token != "" {
 		return token
 	}

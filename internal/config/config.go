@@ -28,9 +28,10 @@ type TokenLimit struct {
 
 func LoadConfig() (*Config, error) {
 	// Try to load .env file
-	if err := godotenv.Load(); err != nil {
-		// If .env doesn't exist, use environment variables
-		fmt.Println("No .env file found, using environment variables")
+	err := godotenv.Load()
+	if err != nil {
+		cwd, _ := os.Getwd()
+		fmt.Printf("No .env file found in current directory (%s). Using environment variables. Error: %v\n", cwd, err)
 	}
 
 	config := &Config{
